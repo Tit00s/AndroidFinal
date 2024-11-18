@@ -2,7 +2,6 @@ package com.example.prueba.ui.login.UI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,73 +18,67 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prueba.R
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.res.colorResource
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel,navRegistro:()-> Unit){
+fun RegisterScreen(viewnModel: RegisterViewnModel){
 
     Box(
         Modifier
             .fillMaxSize()
             .background(color = colorResource(R.color.Fondo))
-        ){
-        Login(Modifier.align(Alignment.Center),viewModel,navRegistro)
+    ){
+        Regis(modifier = Modifier.align(Alignment.Center), viewModel())
     }
+
+
 }
 
 @Composable
-private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: () -> Unit) {
+fun Regis(modifier: Modifier, viewModel: RegisterViewnModel) {
 
-    val email : String by viewModel.email.observeAsState("")
-    val pas : String by viewModel.pas.observeAsState("")
-    val loginEnb:Boolean by viewModel.loginEnb.observeAsState(false)
-    val loading :Boolean by viewModel.isLoading.observeAsState(false)
+    val email:String by viewModel.email.observeAsState("")
+    val pas:String by viewModel.pas.observeAsState("")
+    val regEnb:Boolean by viewModel.regEnb.observeAsState(false)
     val coroutineScope = rememberCoroutineScope()
-    val registro = navRegistro
-
+    val loading :Boolean by viewModel.isLoading.observeAsState(false)
 
     if (loading){
         Box(Modifier.fillMaxSize()){
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
     }else{
-        Column(modifier) {
+        Column(modifier = modifier) {
             HeaderImage()
-            Spacer(modifier = Modifier.padding(16.dp))
-            EmailField(email) { viewModel.onLoginChanged(it, pas) }
-            Spacer(modifier = Modifier.padding(16.dp))
-            PaswordField(pas) { viewModel.onLoginChanged(email, it) }
-            Spacer(modifier = Modifier.padding(8.dp))
-            resgistrarse(Modifier.align(Alignment.End),registro)
-            Spacer(modifier = Modifier.padding(16.dp))
-            LogBotn(loginEnb) {
-                coroutineScope.launch {
-                    viewModel.onLoginSelected()
-                }
-            }
+            Spacer(modifier= Modifier.padding(16.dp))
+            EmailField(email) {viewModel.onRegisChanged(it,pas)}
+            Spacer(modifier= Modifier.padding(16.dp))
+            PaswordField(pas) {viewModel.onRegisChanged(email,it) }
+            RegBotn(regEnb) { coroutineScope.launch {
+                viewModel.onRegisSelected()
+            }}
 
         }
     }
 
 
-
 }
 
 @Composable
-private fun LogBotn(loginEnb: Boolean, onLoginSelected: () -> Unit) {
-    Button(onClick = {onLoginSelected()}, modifier = Modifier
+private fun RegBotn(RegisEnb: Boolean, onRegisSelected: () -> Unit) {
+    Button(onClick = {onRegisSelected()}, modifier = Modifier
         .fillMaxWidth()
         .height(48.dp),
         colors = ButtonDefaults.buttonColors(
@@ -93,55 +86,19 @@ private fun LogBotn(loginEnb: Boolean, onLoginSelected: () -> Unit) {
             disabledContainerColor = colorResource(id= R.color.analogous_1),
             contentColor = colorResource(id = R.color.analogous_1),
             disabledContentColor = colorResource(id = R.color.naranja)
-        ), enabled = loginEnb
+        ), enabled = RegisEnb
     ) {
-        Text(text = "Iniciar sesion")
+        Text(text = "Registrarte")
     }
 }
 
-@Composable
-private fun resgistrarse(align: Modifier, registro: () -> Unit) {
-    Text(
-        text = "Quieres registarte??",
-        modifier = align.clickable {registro()},
-        fontSize = 12.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color(0xFFFB9600)
-
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PaswordField(pas: String, onTextFieldChanged: (String) -> Unit) {
-    TextField(
-        value = pas,
-        onValueChange = {onTextFieldChanged(it)},
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        placeholder = {
-            Text(text = "Contraseña")
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        singleLine = true,
-        maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = colorResource(R.color.textBoxes),  // Color de fondo del TextField
-            focusedIndicatorColor = colorResource(R.color.darker_shade), // Color del borde cuando está enfocado
-            unfocusedIndicatorColor = Color.Gray // Color del borde cuando no está enfocado
-        )
-
-        )
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EmailField(email: String, onTextFieldChanged:(String) ->Unit) {
+private fun EmailField(email:String, onRegisChanged:(String)->Unit ) {
     TextField(
         value = email,
-        onValueChange = {onTextFieldChanged(it)},
+        onValueChange = {onRegisChanged(it)},
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -159,9 +116,31 @@ private fun EmailField(email: String, onTextFieldChanged:(String) ->Unit) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PaswordField(pas: String, onRegisChanged:(String)->Unit) {
+    TextField(
+        value = pas,
+        onValueChange = {onRegisChanged(it)},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        placeholder = {
+            Text(text = "Contraseña")
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        singleLine = true,
+        maxLines = 1,
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = colorResource(R.color.textBoxes),  // Color de fondo del TextField
+            focusedIndicatorColor = colorResource(R.color.darker_shade), // Color del borde cuando está enfocado
+            unfocusedIndicatorColor = Color.Gray // Color del borde cuando no está enfocado
+        )
+
+    )
+
+}
 @Composable
 private fun HeaderImage(){
     Image(painter = painterResource(id= R.drawable.logoapp), contentDescription = "Header")
 }
-
-
