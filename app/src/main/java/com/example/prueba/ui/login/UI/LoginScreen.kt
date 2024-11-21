@@ -43,7 +43,14 @@ fun LoginScreen(viewModel: LoginViewModel,navRegistro:()-> Unit){
         ){
         Login(Modifier.align(Alignment.Center),viewModel,navRegistro)
     }
+
+
+
 }
+
+
+
+
 
 @Composable
 private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: () -> Unit) {
@@ -54,6 +61,7 @@ private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: ()
     val loading :Boolean by viewModel.isLoading.observeAsState(false)
     val coroutineScope = rememberCoroutineScope()
     val registro = navRegistro
+    val pruebaBtn = viewModel.insertReceta()
 
 
     if (loading){
@@ -63,6 +71,7 @@ private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: ()
     }else{
         Column(modifier) {
             HeaderImage()
+            prueba({ pruebaBtn })
             Spacer(modifier = Modifier.padding(16.dp))
             EmailField(email) { viewModel.onLoginChanged(it, pas) }
             Spacer(modifier = Modifier.padding(16.dp))
@@ -81,6 +90,12 @@ private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: ()
 
 
 
+}
+@Composable
+private fun prueba(insertReceta: () ->Unit){
+    Button(onClick = {insertReceta()}) {
+     Text(text = "Prueba")
+    }
 }
 
 @Composable

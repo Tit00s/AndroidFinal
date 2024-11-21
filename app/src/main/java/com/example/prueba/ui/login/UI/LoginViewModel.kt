@@ -1,14 +1,23 @@
 package com.example.prueba.ui.login.UI
 
+import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.util.Patterns
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.prueba.R
+import com.example.prueba.app.RoomApp
+import com.example.prueba.data.entites.receta
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.Console
 
 class LoginViewModel: ViewModel(){
@@ -26,6 +35,17 @@ class LoginViewModel: ViewModel(){
 
     private val _isLoading=MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
+    fun insertReceta(){
+        //val c = LocalContext.current
+        //val bitmap = BitmapFactory.decodeResource(c.resources, R.drawable.logoapp)
+        val r = receta(nombre = "asd", pasos = "asd", ingredientes = "asd", vegano = false, gluten = false)
+
+        viewModelScope.launch {
+            RoomApp.db.recetaDao().insertar(r)
+        }
+
+    }
 
 
     fun onLoginChanged(email: String, pas: String) {

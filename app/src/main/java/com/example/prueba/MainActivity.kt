@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prueba.ui.login.UI.LoginScreen
 import com.example.prueba.ui.login.UI.LoginViewModel
 import com.example.prueba.ui.navigation.NavigationWrapper
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PruebaTheme {
+
 
                 NavigationWrapper()
             }
