@@ -1,5 +1,6 @@
 package com.example.prueba.ui.login.UI
 
+import android.view.WindowInsets.Side
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,14 +35,17 @@ import androidx.compose.ui.res.colorResource
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel,navRegistro:()-> Unit){
+fun LoginScreen(viewModel: LoginViewModel, navRegistro: () -> Unit, navPrincipal: () -> Unit){
 
     Box(
         Modifier
             .fillMaxSize()
             .background(color = colorResource(R.color.Fondo))
         ){
-        Login(Modifier.align(Alignment.Center),viewModel,navRegistro)
+        Login(Modifier.align(Alignment.Center),
+            viewModel,
+            navRegistro,
+            navPrincipal)
     }
 
 
@@ -53,16 +57,24 @@ fun LoginScreen(viewModel: LoginViewModel,navRegistro:()-> Unit){
 
 
 @Composable
-private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: () -> Unit) {
-
+private fun Login(
+    modifier: Modifier,
+    viewModel: LoginViewModel,
+    navRegistro: () -> Unit,
+    navPrincipal: () -> Unit
+) {
     val email : String by viewModel.email.observeAsState("")
     val pas : String by viewModel.pas.observeAsState("")
     val loginEnb:Boolean by viewModel.loginEnb.observeAsState(false)
     val loading :Boolean by viewModel.isLoading.observeAsState(false)
     val coroutineScope = rememberCoroutineScope()
-    val registro = navRegistro
-    val pruebaBtn = viewModel.insertReceta()
+    val correcto = viewModel.Correcto.observeAsState(false)
 
+    SideEffect {
+        if (correcto.value == true){
+            navPrincipal()
+        }
+    }
 
     if (loading){
         Box(Modifier.fillMaxSize()){
@@ -71,13 +83,12 @@ private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: ()
     }else{
         Column(modifier) {
             HeaderImage()
-            prueba({ pruebaBtn })
             Spacer(modifier = Modifier.padding(16.dp))
             EmailField(email) { viewModel.onLoginChanged(it, pas) }
             Spacer(modifier = Modifier.padding(16.dp))
             PaswordField(pas) { viewModel.onLoginChanged(email, it) }
             Spacer(modifier = Modifier.padding(8.dp))
-            resgistrarse(Modifier.align(Alignment.End),registro)
+            resgistrarse(Modifier.align(Alignment.End),navRegistro)
             Spacer(modifier = Modifier.padding(16.dp))
             LogBotn(loginEnb) {
                 coroutineScope.launch {
@@ -90,12 +101,6 @@ private fun Login(modifier: Modifier, viewModel: LoginViewModel, navRegistro: ()
 
 
 
-}
-@Composable
-private fun prueba(insertReceta: () ->Unit){
-    Button(onClick = {insertReceta()}) {
-     Text(text = "Prueba")
-    }
 }
 
 @Composable
@@ -112,6 +117,7 @@ private fun LogBotn(loginEnb: Boolean, onLoginSelected: () -> Unit) {
     ) {
         Text(text = "Iniciar sesion")
     }
+
 }
 
 @Composable

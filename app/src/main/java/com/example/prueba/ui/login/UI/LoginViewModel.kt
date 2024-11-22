@@ -4,18 +4,22 @@ import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Dao
 import com.example.prueba.R
 import com.example.prueba.app.RoomApp
+import com.example.prueba.data.dao.recetaDAO
 import com.example.prueba.data.entites.receta
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Console
@@ -36,13 +40,23 @@ class LoginViewModel: ViewModel(){
     private val _isLoading=MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private var _Correcto=MutableLiveData<Boolean>()
+    val Correcto:LiveData<Boolean> = _Correcto
+
+
+    @SuppressLint("CoroutineCreationDuringComposition")
+    @Composable
     fun insertReceta(){
-        //val c = LocalContext.current
+        val c = LocalContext.current
         //val bitmap = BitmapFactory.decodeResource(c.resources, R.drawable.logoapp)
-        val r = receta(nombre = "asd", pasos = "asd", ingredientes = "asd", vegano = false, gluten = false)
+        //val r = receta(nombre = "asd", pasos = "asd", ingredientes = "asd", vegano = false, gluten = false)
+
 
         viewModelScope.launch {
-            RoomApp.db.recetaDao().insertar(r)
+            val r =RoomApp.db.recetaDao().getone()
+            val toas =Toast.makeText(c,r.toString(),Toast.LENGTH_SHORT)
+            toas.show()
+
         }
 
     }
@@ -60,17 +74,25 @@ class LoginViewModel: ViewModel(){
     private fun  isValidPas(pas :String):Boolean = pas.length >6
 
 
-    suspend fun onLoginSelected(){
+     suspend fun  onLoginSelected(){
         _isLoading.value = true
         delay(4000)
         _isLoading.value =false
          FirebaseAuth.getInstance().signInWithEmailAndPassword(email.value.toString(), pas.value.toString()).addOnCompleteListener(){
              if (it.isSuccessful){
-                 _email.value = "Enhorabuena"
-                 _pas.value = "Enhorabuena"
+                 val u = FirebaseAuth.getInstance().currentUser
+                 if (u?.isEmailVerified == true){
+                     _email.value = "Correcto"
+                     _Correcto.postValue(true)
+                 }else{
+                     _email.value = "Verificate"
+                     _Correcto.postValue(false)
+                 }
+
              }else{
-                 _email.value = "Algo ha fallado"
-                 _pas.value = "Algo ha fallado"
+                 _email.value = "Mal"
+                 _Correcto.postValue(false)
+
              }
          }
 

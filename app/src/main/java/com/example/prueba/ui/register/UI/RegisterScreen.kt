@@ -1,4 +1,4 @@
-package com.example.prueba.ui.login.UI
+package com.example.prueba.ui.register.UI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +33,7 @@ import com.example.prueba.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterScreen(viewnModel: RegisterViewnModel){
+fun RegisterScreen(viewnModel: RegisterViewnModel, function: () -> Unit){
 
     Box(
         Modifier

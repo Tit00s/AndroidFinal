@@ -1,4 +1,4 @@
-package com.example.prueba.ui.login.UI
+package com.example.prueba.ui.register.UI
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
@@ -40,8 +40,8 @@ class RegisterViewnModel: ViewModel() {
         _isLoading.value =false
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.value.toString(),pas.value.toString()).addOnCompleteListener(){
             if (it.isSuccessful){
-                _email.value = "Enhorabuena"
-                _pas.value = "Enhorabuena"
+                val u = FirebaseAuth.getInstance().currentUser
+                u?.sendEmailVerification()
             }else{
                 _email.value = "Algo ha fallado"
                 _pas.value = "Algo ha fallado"
