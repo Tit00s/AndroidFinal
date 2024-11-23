@@ -26,7 +26,4 @@ interface recetaDAO{
 
     @Query("SELECT * FROM RECETA")
     suspend fun getAll():List<receta>
-
-    @Query("Select * FROM Receta where id = 1")
-    suspend fun getone():receta
 }

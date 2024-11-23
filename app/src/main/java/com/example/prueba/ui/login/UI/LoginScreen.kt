@@ -1,6 +1,5 @@
 package com.example.prueba.ui.login.UI
 
-import android.view.WindowInsets.Side
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,17 +34,14 @@ import androidx.compose.ui.res.colorResource
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, navRegistro: () -> Unit, navPrincipal: () -> Unit){
+fun LoginScreen(viewModel: LoginViewModel, navRegistro: () -> Unit, navPrincipal:  () -> Unit){
 
     Box(
         Modifier
             .fillMaxSize()
             .background(color = colorResource(R.color.Fondo))
         ){
-        Login(Modifier.align(Alignment.Center),
-            viewModel,
-            navRegistro,
-            navPrincipal)
+        Login(Modifier.align(Alignment.Center),viewModel,navRegistro,navPrincipal)
     }
 
 
@@ -63,18 +59,22 @@ private fun Login(
     navRegistro: () -> Unit,
     navPrincipal: () -> Unit
 ) {
+
     val email : String by viewModel.email.observeAsState("")
     val pas : String by viewModel.pas.observeAsState("")
     val loginEnb:Boolean by viewModel.loginEnb.observeAsState(false)
     val loading :Boolean by viewModel.isLoading.observeAsState(false)
     val coroutineScope = rememberCoroutineScope()
-    val correcto = viewModel.Correcto.observeAsState(false)
+    val registro = navRegistro
+    val correcto:Boolean by viewModel.correcto.observeAsState(false)
 
-    SideEffect {
-        if (correcto.value == true){
+    LaunchedEffect(correcto) {
+        if (correcto){
+
             navPrincipal()
         }
     }
+
 
     if (loading){
         Box(Modifier.fillMaxSize()){
@@ -88,7 +88,7 @@ private fun Login(
             Spacer(modifier = Modifier.padding(16.dp))
             PaswordField(pas) { viewModel.onLoginChanged(email, it) }
             Spacer(modifier = Modifier.padding(8.dp))
-            resgistrarse(Modifier.align(Alignment.End),navRegistro)
+            resgistrarse(Modifier.align(Alignment.End),registro)
             Spacer(modifier = Modifier.padding(16.dp))
             LogBotn(loginEnb) {
                 coroutineScope.launch {
@@ -102,6 +102,7 @@ private fun Login(
 
 
 }
+
 
 @Composable
 private fun LogBotn(loginEnb: Boolean, onLoginSelected: () -> Unit) {
@@ -117,7 +118,6 @@ private fun LogBotn(loginEnb: Boolean, onLoginSelected: () -> Unit) {
     ) {
         Text(text = "Iniciar sesion")
     }
-
 }
 
 @Composable

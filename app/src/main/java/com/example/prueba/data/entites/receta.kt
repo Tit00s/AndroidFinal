@@ -12,6 +12,7 @@ data class receta(
     @ColumnInfo("pasos")val pasos:String,
     @ColumnInfo("ingredientes") val ingredientes:String,
     @ColumnInfo("vegano") val vegano:Boolean,
-    @ColumnInfo("gluten") val gluten:Boolean
+    @ColumnInfo("gluten") val gluten:Boolean,
+    @ColumnInfo("imagen") val imagen:String
 ) {
 }
