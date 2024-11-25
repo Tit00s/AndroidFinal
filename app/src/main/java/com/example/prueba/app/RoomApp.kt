@@ -1,6 +1,7 @@
 package com.example.prueba.app
 
 import android.app.Application
+import android.util.Log
 import androidx.room.Room
 import com.example.prueba.data.database.AppDataBase
 
@@ -16,6 +17,10 @@ class RoomApp:Application() {
             applicationContext,
             AppDataBase::class.java,
             "recetaDB"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
+
+        val version = db.openHelper.readableDatabase.version
+        Log.d("DB_VERSION", "Database version: $version")
     }
+
 }

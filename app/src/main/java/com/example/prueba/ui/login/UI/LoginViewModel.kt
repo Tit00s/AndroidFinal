@@ -1,24 +1,21 @@
 package com.example.prueba.ui.login.UI
 
-import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.provider.ContactsContract.CommonDataKinds.Email
 import android.util.Patterns
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.prueba.R
 import com.example.prueba.app.RoomApp
 import com.example.prueba.data.entites.receta
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.Console
+import java.io.File
+import java.io.FileOutputStream
 
 class LoginViewModel: ViewModel(){
 
@@ -40,6 +37,15 @@ class LoginViewModel: ViewModel(){
     val correcto:LiveData<Boolean> =_Correcto
 
 
+    fun insertarReceta(receta: receta) {
+        viewModelScope.launch(Dispatchers.IO) {
+            RoomApp.db.recetaDao().insertar(receta)
+        }
+    }
+
+
+
+
 
 
     fun onLoginChanged(email: String, pas: String) {
@@ -56,7 +62,7 @@ class LoginViewModel: ViewModel(){
 
     suspend fun onLoginSelected(){
         _isLoading.value = true
-        delay(7000)
+        delay(5000)
         _isLoading.value =false
          FirebaseAuth.getInstance().signInWithEmailAndPassword(email.value.toString(), pas.value.toString()).addOnCompleteListener(){
              if (it.isSuccessful){

@@ -21,6 +21,10 @@ interface recetaDAO{
     @Update
     suspend fun  update(receta:receta):Int
 
+    @Query("SELECT imagen FROM RECETA WHERE ID = 2")
+    suspend fun getimg():String
+
+
     @Delete
     suspend fun delete(receta: receta):Int
 

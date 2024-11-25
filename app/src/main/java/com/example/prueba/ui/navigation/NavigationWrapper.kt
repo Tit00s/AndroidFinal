@@ -21,7 +21,7 @@ fun NavigationWrapper() {
             RegisterScreen(viewModel()) { navController.navigate(Principal) }
         }
         composable<Principal> {
-            principalScreen()
+            principalScreen(viewModel())
         }
     }
 }
