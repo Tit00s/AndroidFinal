@@ -19,8 +19,6 @@ import java.io.FileOutputStream
 
 class LoginViewModel: ViewModel(){
 
-
-
     private val _email=MutableLiveData<String>()
     val email: LiveData<String> = _email
 

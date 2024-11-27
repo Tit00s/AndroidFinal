@@ -1,7 +1,6 @@
 package com.example.prueba.ui.principal.UI
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,54 +26,55 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.prueba.R
 import com.example.prueba.data.entites.receta
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
+
 
 
 @Composable
-fun principalScreen(viewModel: PrincipalModel){
+fun principalScreen(viewModel: PrincipalViewModel) {
+    // Obtenemos las recetas desde el ViewModel
 
 
+    val recetas by viewModel.recetasLiveData.observeAsState(emptyList())
 
-
-
+    // UI principal
     Box(
         Modifier
             .fillMaxSize()
-            .background(color = colorResource(R.color.Fondo))){
-        principal(Modifier,viewModel)
+            .background(color = colorResource(R.color.Fondo))
+    ) {
+        LaunchedEffect(Unit) {
+            viewModel.fetchRecetas()
+        }
+        PrincipalContent(recetas, viewModel)
     }
-
 }
 
 @Composable
-private fun principal(modifier: Modifier, viewModel: PrincipalModel){
-
-
-    Column(modifier){
-
-        val receta = viewModel.getAllRecetas().observeAsState(emptyList())
-
-        LazyColumn(modifier= Modifier.fillMaxSize()) {
-            items(receta.value){
-                receta -> RecetaCard(receta,viewModel)
+private fun PrincipalContent(recetas: List<receta>, viewModel: PrincipalViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(recetas) { receta ->
+                RecetaCard(receta = receta, viewModel = viewModel)
             }
         }
-
     }
-
-
 }
+
 @Composable
-fun RecetaCard(receta: receta, viewModel: PrincipalModel) {
+fun RecetaCard(receta: receta, viewModel: PrincipalViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,39 +85,30 @@ fun RecetaCard(receta: receta, viewModel: PrincipalModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Usamos el componente de imagen
-            RecipeImage(imagenPath = receta.imagen,viewModel)
+            // Imagen de la receta
+            RecipeImage(imagenPath = receta.imagen, viewModel)
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Texto de la receta
-            Text(text = receta.nombre)
+            // Nombre de la receta
+            Text(
+                text = receta.nombre,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }
+
 @Composable
-fun RecipeImage(imagenPath: String,viewModel: PrincipalModel) {
-    val coroutineScope = rememberCoroutineScope()
-    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+fun RecipeImage(imagenPath: String, viewModel: PrincipalViewModel) {
+    Card {
+        AsyncImage(
+            model = imagenPath,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
 
-    // Realiza la tarea de redimensionamiento en un hilo de fondo
-    LaunchedEffect(imagenPath) {
-        coroutineScope.launch {
-            val resizedBitmap = withContext(Dispatchers.Default) {
-
-                viewModel.getResizedBitmap(imagenPath, 200, 200)
-            }
-            imageBitmap = resizedBitmap
-        }
-    }
-
-    // Muestra la imagen cuando esté disponible
-    imageBitmap?.let {
-        Image(
-            bitmap = it.asImageBitmap(),
-            contentDescription = "Imagen de la receta",
-            modifier = Modifier.fillMaxWidth().height(200.dp)
         )
+
     }
 }
 

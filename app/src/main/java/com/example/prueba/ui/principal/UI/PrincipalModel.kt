@@ -3,6 +3,7 @@ package com.example.prueba.ui.principal.UI
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ColorSpace
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,21 +16,13 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-class PrincipalModel: ViewModel() {
+class PrincipalModel{
     private val recetaDao = RoomApp.db.recetaDao()
 
-    fun getAllRecetas(): LiveData<List<receta>> {
-        val recetasLiveData = MutableLiveData<List<receta>>()
-
-        // Lanzamos la corrutina para acceder a la base de datos de manera asíncrona
-        viewModelScope.launch {
-            // Ejecutamos la consulta en segundo plano
-            val recetas = recetaDao.getAll()
-            recetasLiveData.postValue(recetas) // Actualizamos el LiveData con los resultados
-        }
-
-        return recetasLiveData
+    suspend fun getAllRecetas(): List<receta> {
+        return recetaDao.getAll()
     }
+
     fun getResizedBitmap(filePath: String, maxWidth: Int, maxHeight: Int): Bitmap? {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
@@ -44,5 +37,7 @@ class PrincipalModel: ViewModel() {
 
         return BitmapFactory.decodeFile(filePath, options)
     }
+
+
 
 }
