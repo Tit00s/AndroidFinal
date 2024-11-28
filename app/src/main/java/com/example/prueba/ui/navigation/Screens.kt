@@ -12,3 +12,6 @@ object Registro
 
 @Serializable
 object Principal
+
+@Serializable
+object recetaNueva

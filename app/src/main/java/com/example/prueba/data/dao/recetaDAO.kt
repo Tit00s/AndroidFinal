@@ -15,9 +15,6 @@ interface recetaDAO{
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun  insertar(receta:receta):Long
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun  insertarLista(recetas:List<receta>):List<Long>
-
     @Update
     suspend fun  update(receta:receta):Int
 
@@ -25,8 +22,8 @@ interface recetaDAO{
     suspend fun getimg():String
 
 
-    @Delete
-    suspend fun delete(receta: receta):Int
+    @Query("DELETE FROM receta where id = :recetaID")
+    suspend fun deltebyId(recetaID:Int): Int
 
     @Query("SELECT * FROM RECETA")
     suspend fun getAll():List<receta>

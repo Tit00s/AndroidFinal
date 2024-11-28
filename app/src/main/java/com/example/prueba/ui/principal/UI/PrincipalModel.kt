@@ -17,25 +17,14 @@ import java.io.File
 import java.io.FileOutputStream
 
 class PrincipalModel{
+
     private val recetaDao = RoomApp.db.recetaDao()
 
     suspend fun getAllRecetas(): List<receta> {
         return recetaDao.getAll()
     }
-
-    fun getResizedBitmap(filePath: String, maxWidth: Int, maxHeight: Int): Bitmap? {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(filePath, options)
-
-        // Calcular la escala
-        val scaleFactor = Math.min(options.outWidth / maxWidth, options.outHeight / maxHeight)
-
-        // Redimensionar la imagen si es necesario
-        options.inJustDecodeBounds = false
-        options.inSampleSize = scaleFactor
-
-        return BitmapFactory.decodeFile(filePath, options)
+    suspend fun deleteReceta(id:Int): Int {
+        return recetaDao.deltebyId(id)
     }
 
 

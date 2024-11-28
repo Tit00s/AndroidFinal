@@ -6,7 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.prueba.ui.login.UI.LoginScreen
-import com.example.prueba.ui.principal.UI.principalScreen
+import com.example.prueba.ui.principal.UI.PrincipalScreen
+import com.example.prueba.ui.recetaNueva.UI.RecetaNuevaScreen
 import com.example.prueba.ui.register.UI.RegisterScreen
 
 @Composable
@@ -18,10 +19,13 @@ fun NavigationWrapper() {
             LoginScreen(viewModel(), {navController.navigate(Registro)},{navController.navigate(Principal)})
         }
         composable<Registro> {
-            RegisterScreen(viewModel()) { navController.navigate(Principal) }
+            RegisterScreen(viewModel()) { navController.navigate(Login) }
         }
         composable<Principal> {
-            principalScreen(viewModel())
+            PrincipalScreen(viewModel()) { navController.navigate(recetaNueva)}
+        }
+        composable<recetaNueva> {
+            RecetaNuevaScreen() {navController.navigate(Principal)}
         }
     }
 }

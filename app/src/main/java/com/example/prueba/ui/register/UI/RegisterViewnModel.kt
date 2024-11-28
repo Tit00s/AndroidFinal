@@ -21,6 +21,9 @@ class RegisterViewnModel: ViewModel() {
     private val _isLoading= MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _Correcto = MutableLiveData<Boolean>()
+    val correcto:LiveData<Boolean> =_Correcto
+
 
     fun onRegisChanged(email: String, pas: String){
         _email.value = email
@@ -40,6 +43,9 @@ class RegisterViewnModel: ViewModel() {
         _isLoading.value =false
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.value.toString(),pas.value.toString()).addOnCompleteListener(){
             if (it.isSuccessful){
+                _Correcto.postValue(true)
+                _email.value = "Verificate"
+                _pas.value = "Verificate"
                 val u = FirebaseAuth.getInstance().currentUser
                 u?.sendEmailVerification()
             }else{

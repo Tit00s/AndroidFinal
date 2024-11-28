@@ -35,17 +35,6 @@ class LoginViewModel: ViewModel(){
     val correcto:LiveData<Boolean> =_Correcto
 
 
-    fun insertarReceta(receta: receta) {
-        viewModelScope.launch(Dispatchers.IO) {
-            RoomApp.db.recetaDao().insertar(receta)
-        }
-    }
-
-
-
-
-
-
     fun onLoginChanged(email: String, pas: String) {
         _email.value = email
         _pas.value = pas
@@ -66,7 +55,6 @@ class LoginViewModel: ViewModel(){
              if (it.isSuccessful){
                  val u = FirebaseAuth.getInstance().currentUser
                  if (u?.isEmailVerified == true){
-                     _email.value = "Verificate"
                      _Correcto.postValue(true)
                  }else{
                      _email.value = "Verificate"

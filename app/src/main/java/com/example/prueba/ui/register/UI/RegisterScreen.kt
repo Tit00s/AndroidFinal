@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,27 +34,37 @@ import com.example.prueba.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterScreen(viewnModel: RegisterViewnModel, function: () -> Unit){
+fun RegisterScreen(viewnModel: RegisterViewnModel, navPrincipal: () -> Unit){
 
     Box(
         Modifier
             .fillMaxSize()
             .background(color = colorResource(R.color.Fondo))
     ){
-        Regis(modifier = Modifier.align(Alignment.Center), viewModel())
+        Regis(modifier = Modifier.align(Alignment.Center), viewModel(),navPrincipal)
     }
 
 
 }
 
 @Composable
-fun Regis(modifier: Modifier, viewModel: RegisterViewnModel) {
+fun Regis(modifier: Modifier, viewModel: RegisterViewnModel, navPrincipal: () -> Unit) {
 
     val email:String by viewModel.email.observeAsState("")
     val pas:String by viewModel.pas.observeAsState("")
     val regEnb:Boolean by viewModel.regEnb.observeAsState(false)
     val coroutineScope = rememberCoroutineScope()
     val loading :Boolean by viewModel.isLoading.observeAsState(false)
+
+
+    val correcto:Boolean by viewModel.correcto.observeAsState(false)
+
+    LaunchedEffect(correcto) {
+        if (correcto){
+            navPrincipal()
+        }
+    }
+
 
     if (loading){
         Box(Modifier.fillMaxSize()){

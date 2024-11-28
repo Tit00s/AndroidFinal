@@ -27,6 +27,13 @@ class PrincipalViewModel: ViewModel(){
         }
     }
 
+    fun borrarReceta(id:Int){
+        viewModelScope.launch {
+            Model.deleteReceta(id)
+        }
+        fetchRecetas()
+    }
+
 
 
 

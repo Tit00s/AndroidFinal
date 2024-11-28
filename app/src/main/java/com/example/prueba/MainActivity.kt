@@ -46,9 +46,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PruebaTheme {
-
-
-
                 NavigationWrapper()
             }
         }
