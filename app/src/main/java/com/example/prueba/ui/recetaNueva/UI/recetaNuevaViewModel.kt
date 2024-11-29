@@ -73,8 +73,7 @@ class recetaNuevaViewModel : ViewModel() {
             Model.addReceta(receta)
 
             _Correcto.postValue(true)
-
-
+            
         }
     }
 
